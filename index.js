@@ -42,9 +42,10 @@ class Players {
        return this.hand.shift(card)
     }
 }
+
+
 let Alex = new Players (`Alex`);
 console.log(`Welcome Player 1: ${Alex.player} get ready for the War!`)
-
 let John = new Players (`John Bon Jovi`);
 console.log(`Welcome Player 2: ${John.player} get ready for the War!`)
 
@@ -55,14 +56,14 @@ class Decks {
         this.generateDeck();      
     }
 
-//genrates 52 cards with value and suit - called when deck is created
+    //genrates 52 cards with value and suit - called when deck is created
     generateDeck (){
-        this.deck.push(
-            values.flatMap((value) => 
+        let newDeck = values.flatMap((value) => 
             suits.map((suit) => new Cards(value,suit))
-            )
-        )
-    }
+        );
+        
+        this.deck = newDeck
+    };
 
     // //used to randmoize array before dealing cards to players
     // //upon research discoverd the Fisher-Yates Algorithm that was reccomended to randmize position in an array
@@ -74,15 +75,53 @@ class Decks {
             this.deck[i] = oldValue
         }
     }
+    
+}
 
-    dealCards (){
-        
+class Game{
+    constructor(Player1, Player2, Deck){
+        this.player1 = Player1
+        this.player2 = Player2
+        this.deck = Deck
     }
 
+    start (){
+        dealCards();
+
+    }
+
+    dealCards(){
+        for (let y = this.deck.length -1; y > 0; y - 2){
+            let dealtCard = this.deck.pop();
+            console.log(dealtCard)
+        }
+
+        
+        
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 let deckOfCards = new Decks ();
 deckOfCards.shuffleDeck();
-console.log(deckOfCards)
+console.log(deckOfCards);
+let warGame = new Game(Alex, John, deckOfCards)
+warGame.dealCards();
+
+
+
+// deckOfCards.dealCards(Alex,John)
+// console.log(Alex.hand)
+// console.log(John.hand)
 
 console.log(`The deck is shuffled and ready!`)
