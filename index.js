@@ -91,14 +91,11 @@ class Game{
     }
 
     dealCards(){
-        for (let y = this.deck.length -1; y > 0; y - 2){
-            let dealtCard = this.deck.pop();
-            console.log(dealtCard)
-        }
-
         
-        
+        console.log(this.deck.length)
     }
+
+
 }
 
 
@@ -115,8 +112,8 @@ class Game{
 let deckOfCards = new Decks ();
 deckOfCards.shuffleDeck();
 console.log(deckOfCards);
+console.log(`The deck is shuffled and ready!`)
 let warGame = new Game(Alex, John, deckOfCards)
-warGame.dealCards();
 
 
 
@@ -124,4 +121,3 @@ warGame.dealCards();
 // console.log(Alex.hand)
 // console.log(John.hand)
 
-console.log(`The deck is shuffled and ready!`)
