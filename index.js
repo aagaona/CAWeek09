@@ -14,6 +14,9 @@
 //Could display name of winner per flip and current score
 //Display Winner and Score at the end
 
+let suits = [`♥`, `♠`, `♣`, `♦`]
+let values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+
 
 class Cards {
     constructor (value, suit){
@@ -22,8 +25,6 @@ class Cards {
     }
 }
 
-let suits = [`♥`, `♠`, `♣`, `♦`]
-let values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 
 //Need players
@@ -75,27 +76,39 @@ class Decks {
             this.deck[i] = oldValue
         }
     }
+
+   numberOfCards (){
+    return this.deck.length
+   }
+
+   dealCard (){
+    return this.deck.pop();
+   }
+
+   slice(){
+    return this.deck.slice();
+   }
+
     
 }
 
 class Game{
     constructor(Player1, Player2, Deck){
-        this.player1 = Player1
-        this.player2 = Player2
-        this.deck = Deck
+        this.player1 = Player1;
+        this.player2 = Player2;
+        this.deck = Deck;
     }
 
-    start (){
-        dealCards();
+    dealInPlayers (){
+        let deckMid = this.deck.numberOfCards() /2
+        let player1Deck = this.deck.slice();
 
-    }
+        this.player1.hand = player1Deck;
 
-    dealCards(){
+
+
         
-        console.log(this.deck.length)
     }
-
-
 }
 
 
@@ -114,6 +127,9 @@ deckOfCards.shuffleDeck();
 console.log(deckOfCards);
 console.log(`The deck is shuffled and ready!`)
 let warGame = new Game(Alex, John, deckOfCards)
+warGame.dealInPlayers();
+console.log(Alex.hand)
+
 
 
 
