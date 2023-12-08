@@ -17,6 +17,8 @@
 let suits = [`♥`, `♠`, `♣`, `♦`]
 let values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
+
+//this was the most efficent way I could come up with to resolve the comapring values instead of using values 2-14
 const valueMap = {
     "2": 2,
     "3": 3,
@@ -49,6 +51,7 @@ class Players {
         this.player = name;
         //Players need hands
         this.hand = [];
+        //added score to be able to run the game with a finite end avoiding an infinite loop
         this.score = 0;
     }
 
@@ -102,6 +105,7 @@ class Decks {
     return this.deck.pop();
    }
 
+   //required to be able to call the slice function later
    slice(start, end){
     return this.deck.slice(start, end);
    }
@@ -123,14 +127,16 @@ class Game{
         console.log(`The deck is shuffled and ready!`)
         this.dealInPlayers();
         console.log(`Get Ready`)
-        setTimeout(() => {
-            console.log(`🥊Fight!🥊`)
-        }, 2000);
-        setTimeout(() => {
-            this.endGame();
-        }, 3000);
+        console.log(`🥊Fight!🥊`)
+        this.endGame();
+        // setTimeout(() => {
+        // }, 2000);
+        // setTimeout(() => {
+        // }, 3000);
     }
 
+
+    //Works as long as the deck is even will not work odd number deck
     dealInPlayers (){
         let deckMid = this.deck.numberOfCards() /2
         let player1Deck = this.deck.slice(0, deckMid);
@@ -167,7 +173,7 @@ class Game{
             this.player1.recieveCard(player1card);
             console.log(`it's a tie...`);
     }
-
+        //Shows the current hand of the player to check for cheating
         console.log(this.player1.hand)
         console.log(this.player2.hand)
     };
@@ -175,6 +181,7 @@ class Game{
 
     //create while loop
     endGame (){
+        //This code for some reason produces an endless game IDK why
         // while (this.player1.cardsLeft() > 0 || this.player2.cardsLeft > 0 || this.player1.score === 1000 || this.player2.score === 1000){
         //     this.playCards();
         //    } 
@@ -195,6 +202,7 @@ class Game{
             console.log(`🎆${this.player1.player} has won the War!🎆`)
         }
        
+        //This also did not seem to produce a game with an end
         // if (this.player1.cardsLeft() > 0 || this.player2.cardsLeft > 0){
         //     this.playCards();
         // } else if (this.player1.cardsLeft() === 0){
@@ -206,10 +214,12 @@ class Game{
 };
 
 let Alex = new Players (`Alex`);
-let John = new Players (`John Bon Jovi`);
+let Fezzik = new Players (`Fezzik`);
+// let Player2 =  prompt(`Enter you name:`)
+// let newPlayer = new Players (Player2);
 let deckOfCards = new Decks ();
 console.log(deckOfCards);
-let warGame = new Game(Alex, John, deckOfCards)
+let warGame = new Game(Alex, Fezzik, deckOfCards)
 warGame.startGame();
 
 
