@@ -15,7 +15,23 @@
 //Display Winner and Score at the end
 
 let suits = [`♥`, `♠`, `♣`, `♦`]
-let values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+let values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+
+const valueMap = {
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "10": 10,
+    "J": 11,
+    "Q": 12,
+    "K": 13,
+    "A": 14,
+}
 
 
 class Cards {
@@ -33,22 +49,23 @@ class Players {
         this.player = name;
         //Players need hands
         this.hand = [];
+        this.score = 0;
     }
 
     recieveCard(card){
         this.hand.push(card)
     }
 
-    playCard(card){
-       return this.hand.shift(card)
+    playCard(){
+       return this.hand.shift();
+    }
+
+    cardsLeft (){
+        return this.hand.length
     }
 }
 
 
-let Alex = new Players (`Alex`);
-console.log(`Welcome Player 1: ${Alex.player} get ready for the War!`)
-let John = new Players (`John Bon Jovi`);
-console.log(`Welcome Player 2: ${John.player} get ready for the War!`)
 
 
 class Decks {
@@ -85,8 +102,8 @@ class Decks {
     return this.deck.pop();
    }
 
-   slice(){
-    return this.deck.slice();
+   slice(start, end){
+    return this.deck.slice(start, end);
    }
 
     
@@ -98,42 +115,105 @@ class Game{
         this.player2 = Player2;
         this.deck = Deck;
     }
+    
+    startGame (){
+        console.log(`Welcome Player 1: ${this.player1.player} get ready for the War!`)
+        console.log(`Welcome Player 2: ${this.player2.player} get ready for the War!`)
+        this.deck.shuffleDeck();
+        console.log(`The deck is shuffled and ready!`)
+        this.dealInPlayers();
+        console.log(`Get Ready`)
+        setTimeout(() => {
+            console.log(`🥊Fight!🥊`)
+        }, 2000);
+        setTimeout(() => {
+            this.endGame();
+        }, 3000);
+    }
 
     dealInPlayers (){
         let deckMid = this.deck.numberOfCards() /2
-        let player1Deck = this.deck.slice();
+        let player1Deck = this.deck.slice(0, deckMid);
+        let player2Deck = this.deck.slice(deckMid, this.deck.numberOfCards());
 
         this.player1.hand = player1Deck;
+        this.player2.hand = player2Deck;      
+    }
 
+    playCards (){
+        let player1card = this.player1.playCard();
+        let player2card = this.player2.playCard();
 
+        console.log(player1card);
+        console.log(player2card);
 
+        this.determineWinner(player1card, player2card)
         
     }
-}
+
+    determineWinner (player1card, player2card){
+        if (valueMap[player1card.value] > valueMap[player2card.value]){
+            console.log (`${this.player1.player} wins the round!`);
+                this.player1.recieveCard(player1card);
+                this.player1.recieveCard(player2card);
+                this.player1.score++;
+        } else if (valueMap[player2card.value] > valueMap[player1card.value]){
+            console.log (`${this.player2.player} wins the round!`);
+                this.player2.recieveCard(player1card);
+                this.player2.recieveCard(player2card);
+                this.player2.score++;
+        } else {
+            this.player2.recieveCard(player2card);
+            this.player1.recieveCard(player1card);
+            console.log(`it's a tie...`);
+    }
+
+        console.log(this.player1.hand)
+        console.log(this.player2.hand)
+    };
 
 
+    //create while loop
+    endGame (){
+        // while (this.player1.cardsLeft() > 0 || this.player2.cardsLeft > 0 || this.player1.score === 1000 || this.player2.score === 1000){
+        //     this.playCards();
+        //    } 
+    
+        //    if (this.player1.cardsLeft() === 0 || this.player1.score === 1000){
+        //         console.log(`${this.player2.player} has won the War!`)
+        //     } else if (this.player2.cardsLeft() === 0 || this.player2 === 1000){
+        //         console.log(`${this.player1.player} has won the War!`)
+        //     }     
+              
+        while (this.player1.score < 100 || this.player2.score < 100){
+        this.playCards();
+       } 
 
+       if (this.player1.score === 100){
+            console.log(`🎆${this.player2.player} has won the War!🎆`)
+        } else if (this.player2.score === 100){
+            console.log(`🎆${this.player1.player} has won the War!🎆`)
+        }
+       
+        // if (this.player1.cardsLeft() > 0 || this.player2.cardsLeft > 0){
+        //     this.playCards();
+        // } else if (this.player1.cardsLeft() === 0){
+        //     console.log(`${this.player2.player} has won the War!`)
+        // } else if (this.player2.cardsLeft() === 0){
+        //     console.log(`${this.player1.player} has won the War!`)
+        // }
+    };
+};
 
-
-
-
-
-
-
-
-
+let Alex = new Players (`Alex`);
+let John = new Players (`John Bon Jovi`);
 let deckOfCards = new Decks ();
-deckOfCards.shuffleDeck();
 console.log(deckOfCards);
-console.log(`The deck is shuffled and ready!`)
 let warGame = new Game(Alex, John, deckOfCards)
-warGame.dealInPlayers();
-console.log(Alex.hand)
+warGame.startGame();
 
 
 
 
-// deckOfCards.dealCards(Alex,John)
-// console.log(Alex.hand)
-// console.log(John.hand)
+
 
