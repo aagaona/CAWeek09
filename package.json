@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chia": "^0.0.1",
+    "chai": "^4.3.10",
     "mocha": "^10.2.0"
   }
 }

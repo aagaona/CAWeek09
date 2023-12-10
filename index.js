@@ -1,17 +1,18 @@
 //Overview:
 //Building out WAR! Game
 //Players flip cards from the the top of deck high number wins, Aces are High
-//Ties result in no point
+//Ties result in no point > return card to the player to avoid loosing a card from the deck
 //Win gives that player 1 point
-//Play continues until all cards have been used (cards are not reshuffled into the deck, 1 round uses 52 cards)
+//Play continues until all cards have been used (in the real game cards are added back to the bottom of your deck > this may result in an infinte game)
+    //to avoid this added a point cap
 
 //Plan:
 //Players need to play cards from hand
-//Players need to recieve cards
+//Players need to recieve cards whern they win
 //Deck must be shuffled (Rnd.Numbers)
-//Cards must be given to players (Rnd)
-//Track Score
-//Could display name of winner per flip and current score
+//Cards must be given to players - "dealt in" (Rnd)
+//Track Score to determine a winner
+//Could display name of winner per flip 
 //Display Winner and Score at the end
 
 let suits = [`♥`, `♠`, `♣`, `♦`]
@@ -55,16 +56,28 @@ class Players {
         this.score = 0;
     }
 
+
     recieveCard(card){
         this.hand.push(card)
     }
+
 
     playCard(){
        return this.hand.shift();
     }
 
+
     cardsLeft (){
         return this.hand.length
+    }
+
+    shuffleHand () {
+        for (let i = this.hand.length - 1; i > 0; i--){
+            let newIndex = Math.floor(Math.random() * (i + 1))
+            let oldValue = this.hand[newIndex]
+            this.hand[newIndex] = this.hand[i]
+            this.hand[i] = oldValue
+        }
     }
 }
 
@@ -97,9 +110,11 @@ class Decks {
         }
     }
 
+
    numberOfCards (){
     return this.deck.length
    }
+
 
    dealCard (){
     return this.deck.pop();
@@ -120,6 +135,7 @@ class Game{
         this.deck = Deck;
     }
     
+
     startGame (){
         console.log(`Welcome Player 1: ${this.player1.player} get ready for the War!`)
         console.log(`Welcome Player 2: ${this.player2.player} get ready for the War!`)
@@ -129,14 +145,11 @@ class Game{
         console.log(`Get Ready`)
         console.log(`🥊Fight!🥊`)
         this.endGame();
-        // setTimeout(() => {
-        // }, 2000);
-        // setTimeout(() => {
-        // }, 3000);
+        
     }
 
 
-    //Works as long as the deck is even will not work odd number deck
+    //Works as long as the deck is even will not work with odd number deck
     dealInPlayers (){
         let deckMid = this.deck.numberOfCards() /2
         let player1Deck = this.deck.slice(0, deckMid);
@@ -146,6 +159,7 @@ class Game{
         this.player2.hand = player2Deck;      
     }
 
+
     playCards (){
         let player1card = this.player1.playCard();
         let player2card = this.player2.playCard();
@@ -154,11 +168,21 @@ class Game{
         console.log(player2card);
 
         this.determineWinner(player1card, player2card)
+
         
     }
 
+
     determineWinner (player1card, player2card){
-        if (valueMap[player1card.value] > valueMap[player2card.value]){
+        if (this.player1.cardsLeft() === 0){
+            this.player2.recieveCard(player1card);
+            this.player2.recieveCard(player2card);
+            this.player2.score = 1000
+        } else if (this.player2.cardsLeft() === 0){
+            this.player1.recieveCard(player1card);
+            this.player1.recieveCard(player2card);
+            this.player1.score = 1000
+        } else if (valueMap[player1card.value] > valueMap[player2card.value]){
             console.log (`${this.player1.player} wins the round!`);
                 this.player1.recieveCard(player1card);
                 this.player1.recieveCard(player2card);
@@ -172,51 +196,36 @@ class Game{
             this.player2.recieveCard(player2card);
             this.player1.recieveCard(player1card);
             console.log(`it's a tie...`);
-    }
+        }
         //Shows the current hand of the player to check for cheating
-        console.log(this.player1.hand)
-        console.log(this.player2.hand)
+        // console.log(this.player1.hand)
+        // console.log(this.player2.hand)
     };
 
 
-    //create while loop
-    endGame (){
-        //This code for some reason produces an endless game IDK why
-        // while (this.player1.cardsLeft() > 0 || this.player2.cardsLeft > 0 || this.player1.score === 1000 || this.player2.score === 1000){
-        //     this.playCards();
-        //    } 
-    
-        //    if (this.player1.cardsLeft() === 0 || this.player1.score === 1000){
-        //         console.log(`${this.player2.player} has won the War!`)
-        //     } else if (this.player2.cardsLeft() === 0 || this.player2 === 1000){
-        //         console.log(`${this.player1.player} has won the War!`)
-        //     }     
-              
-        while (this.player1.score < 100 || this.player2.score < 100){
+    //created loop to end the game if no one gets all the cards, 1000 seems to be a high a enough score to play most of the cards
+    endGame (){           
+        while (this.player1.score < 1000 && this.player2.score < 1000){
         this.playCards();
        } 
 
-       if (this.player1.score === 100){
-            console.log(`🎆${this.player2.player} has won the War!🎆`)
-        } else if (this.player2.score === 100){
+       if (this.player1.score === 1000 || (this.player1.score > this.player2.score)){
             console.log(`🎆${this.player1.player} has won the War!🎆`)
-        }
-       
-        //This also did not seem to produce a game with an end
-        // if (this.player1.cardsLeft() > 0 || this.player2.cardsLeft > 0){
-        //     this.playCards();
-        // } else if (this.player1.cardsLeft() === 0){
-        //     console.log(`${this.player2.player} has won the War!`)
-        // } else if (this.player2.cardsLeft() === 0){
-        //     console.log(`${this.player1.player} has won the War!`)
-        // }
+            console.log(`${this.player1.player}'s Final Score: ${this.player1.score} 👑`)
+            console.log(`${this.player2.player}'s Final Score: ${this.player2.score} 💀`)
+        } else if (this.player2.score === 1000 || (this.player2.score > this.player1.score)){
+            console.log(`🎆${this.player2.player} has won the War!🎆`)
+            console.log(`${this.player1.player}'s Final Score: ${this.player1.score} 💀`)
+            console.log(`${this.player2.player}'s Final Score: ${this.player2.score} 👑`)
+        } else {console.log(`This war had no winners...`)};
     };
 };
 
 let Alex = new Players (`Alex`);
 let Fezzik = new Players (`Fezzik`);
-// let Player2 =  prompt(`Enter you name:`)
-// let newPlayer = new Players (Player2);
+// was going to include a prompt so viewer could enter the game, this worked but for testing removed this to make it quicker to refresh
+    // let Player2 =  prompt(`Enter you name:`)
+    // let newPlayer = new Players (Player2);
 let deckOfCards = new Decks ();
 console.log(deckOfCards);
 let warGame = new Game(Alex, Fezzik, deckOfCards)
